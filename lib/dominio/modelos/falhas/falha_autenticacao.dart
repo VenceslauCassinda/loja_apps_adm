@@ -1,0 +1,2 @@
+class FalhaAutenticacao implements Exception {
+}
