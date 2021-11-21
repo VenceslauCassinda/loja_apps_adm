@@ -1,4 +1,4 @@
-import 'package:loja_apps_adm/dominio/contratos/provedor_usuarios_i.dart';
+import 'package:dependencias_loja_apps/usuarios/provedor_usuarios_i.dart';
 import 'package:loja_apps_adm/dominio/modelos/usuario.dart';
 import 'package:loja_apps_adm/vista/contratos/autenticacao_usuario_i.dart';
 

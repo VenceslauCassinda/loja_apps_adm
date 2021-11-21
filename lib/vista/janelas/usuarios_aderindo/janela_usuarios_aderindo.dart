@@ -22,9 +22,14 @@ class JanelaUsuariosAderindo extends StatelessWidget {
           backgroundColor: Colors.white,
           title: Row(
             children: [
-              Text(
-                "Usuarios Aderindo",
-                style: TextStyle(color: Colors.black),
+              InkWell(
+                onTap: () {
+                  _c.irParaJanelaCadastro();
+                },
+                child: Text(
+                  "Usuarios Aderindo",
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
               Spacer(),
               InkWell(

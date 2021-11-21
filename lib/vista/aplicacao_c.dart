@@ -12,6 +12,7 @@ import 'package:loja_apps_adm/vista/janelas/usuarios_cadastrados/janela_usuarios
 import 'package:oku_sanga_mediador_funcional/entidades/erros/todos_erros.dart';
 import 'package:oku_sanga_mediador_funcional/utils/mensagens_sistema.dart';
 import 'package:oku_sanga_mediador_funcional/cotratos/contratos_por_interface.dart';
+import 'package:loja_apps/provedores/provedor_usuarios.dart' as p;
 
 import 'janelas/usuarios_aderindo/janela_usuarios_aderindo_c.dart';
 
@@ -67,6 +68,7 @@ class AplicacaoC extends GetxController {
         JanelaUsuariosCadastradosC janelaUsuariosCadastradosC = Get.find();
         await janelaUsuariosCadastradosC
             .encomendarDescargaUsuariosCadastrados();
+            Get.put(p.ProvedorUsuarios(await pegarRotaUsuariosAderindo()),tag: "000");
       }
     });
   }

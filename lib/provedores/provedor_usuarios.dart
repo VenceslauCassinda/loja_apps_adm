@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:loja_apps_adm/dominio/contratos/provedor_usuarios_i.dart';
+import 'package:dependencias_loja_apps/usuarios/provedor_usuarios_i.dart';
 import 'package:loja_apps_adm/dominio/modelos/usuario.dart';
 import 'package:loja_apps_adm/vista/aplicacao_c.dart';
 import 'package:loja_apps_adm/vista/dialogos/dialogos.dart';
@@ -61,13 +61,18 @@ class ProvedorUsuarios implements ProvedorUsuariosI {
             accaoNaIndisponibilidadeServidor: () async {
       await autorizarCadastroUsuario(usuario);
     });
-    _mediadorCrudCadastrados!.contruirMediador(
+    _mediadorCrudCadastrados!.accaoNoFimDeTodaSubmissao = () async {
+      JanelaUsuariosAderindoC aderindoC = Get.find();
+      await aderindoC
+          .encomendarRemocaoUsuarioAderindo(Usuario.fromJson(usuario));
+    };
+    await _mediadorCrudCadastrados!.contruirMediador(
         accaoNaFinalizacaoPreparo: (m) async {
       var listaSubRepositoriosAntiga = (await m.pegarListaSubRepositorios())!;
       await m.submeterRepositorioCompleto(
           usuario, listaSubRepositoriosAntiga, true, "email", () {
         mostrarDialogoDeInformacao(
-            "Já existe um usuario com este email!", false);
+            "Já existe um usuario com este email!", true);
       }, OperacaoCrudEmRepositorio.adicionar);
     });
   }
@@ -101,6 +106,12 @@ class ProvedorUsuarios implements ProvedorUsuariosI {
         cadastradosC.gerarDialogoParaRemocaoUsuario(Usuario.fromJson(usuario));
       });
     });
+
+    _mediadorCrudCadastrados!.accaoNoFimDeTodaSubmissao = () async {
+      mostrarToast("Usuário eliminado!");
+      mostrar("USUARIO REMOVIDO DOS ADERINDO");
+    };
+
     _mediadorCrudCadastrados!.contruirMediador(
         accaoNaFinalizacaoPreparo: (m) async {
       var listaSubRepositoriosAntiga = (await m.pegarListaSubRepositorios())!;
@@ -119,11 +130,20 @@ class ProvedorUsuarios implements ProvedorUsuariosI {
         aderindoC.gerarDialogoParaRemocaoUsuario(Usuario.fromJson(usuario));
       });
     });
+    _mediadorCrudCadastrados!.accaoNoFimDeTodaSubmissao = () {
+      fecharDialogoCasoAberto();
+    };
     _mediadorCrudCadastrados!.contruirMediador(
         accaoNaFinalizacaoPreparo: (m) async {
       var listaSubRepositoriosAntiga = (await m.pegarListaSubRepositorios())!;
       await m.submeterRepositorioCompleto(usuario, listaSubRepositoriosAntiga,
           true, "email", () {}, OperacaoCrudEmRepositorio.remover);
     });
+  }
+
+  @override
+  Future<void> adicionarUsuarioAderindo(Map usuario) {
+    // TODO: implement adicionarUsuarioAderindo
+    throw UnimplementedError();
   }
 }
