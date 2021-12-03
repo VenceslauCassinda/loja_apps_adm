@@ -1,4 +1,4 @@
-import 'package:loja_apps_adm/dominio/modelos/usuario.dart';
+import 'package:loja_apps/dominio/modelos/usuario.dart';
 
 abstract class AutenticacaoUsuarioI {
   Future<List<Usuario>> pegarListaUsuariosAderindo();
@@ -7,4 +7,5 @@ abstract class AutenticacaoUsuarioI {
   Future<void> autorizarCadastroUsuario(Usuario usuario);
   Future<void> removerUsuarioCadastrado(Usuario usuario);
   Future<void> removerUsuarioAderindo(Usuario usuario);
+    Future<void> actualizarrUsuarioCadastrado(Map usuario);
 }

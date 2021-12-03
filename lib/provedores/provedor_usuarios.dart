@@ -1,27 +1,25 @@
+import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:get/get.dart';
 import 'package:dependencias_loja_apps/usuarios/provedor_usuarios_i.dart';
-import 'package:loja_apps_adm/dominio/modelos/usuario.dart';
+import 'package:loja_apps/vista/dialogos/dialogos.dart';
+import 'package:loja_apps/dominio/modelos/usuario.dart';
 import 'package:loja_apps_adm/vista/aplicacao_c.dart';
-import 'package:loja_apps_adm/vista/dialogos/dialogos.dart';
 import 'package:loja_apps_adm/vista/janelas/usuarios_aderindo/janela_usuarios_aderindo_c.dart';
 import 'package:loja_apps_adm/vista/janelas/usuarios_cadastrados/janela_usuarios_cadastrados_c.dart';
 import 'package:oku_sanga_mediador_funcional/oku_sanga_mediador_funcional.dart';
 import 'package:oku_sanga_mediador_funcional/entidades/operacao_crud_repositorio.dart';
+import 'package:oku_sanga_mediador_funcional/entidades/erros/todos_erros.dart';
 
 class ProvedorUsuarios implements ProvedorUsuariosI {
-  MediadorCrud? _mediadorCrudAderindo;
-  MediadorCrud? _mediadorCrudCadastrados;
-
-  ProvedorUsuarios() {}
 
   @override
   Future<List<Map>> pegarListaUsuariosAderindo() async {
-    _mediadorCrudAderindo =
+    MediadorCrud _mediadorCrudAderindo =
         MediadorCrud(await pegarAplicacaoC().pegarRotaUsuariosAderindo(),
             accaoNaIndisponibilidadeServidor: () async {
       await pegarListaUsuariosAderindo();
     });
-    _mediadorCrudAderindo!.contruirMediador(
+    _mediadorCrudAderindo.contruirMediador(
         accaoNaFinalizacaoPreparo: (mediador) async {
       JanelaUsuariosAderindoC janelaUsuariosAderindoC = Get.find();
       await decarregar(janelaUsuariosAderindoC, mediador);
@@ -55,18 +53,18 @@ class ProvedorUsuarios implements ProvedorUsuariosI {
   }
 
   @override
-  Future<void> autorizarCadastroUsuario(Map usuario) async {
-    _mediadorCrudCadastrados =
+  Future<void> autorizarCadastroUsuario(Map usuario, {Function(Erro? erro)? accaoNaFinalizacao}) async {
+    MediadorCrud _mediadorCrudCadastrados =
         MediadorCrud(await pegarAplicacaoC().pegarRotaUsuariosCadastrados(),
             accaoNaIndisponibilidadeServidor: () async {
       await autorizarCadastroUsuario(usuario);
     });
-    _mediadorCrudCadastrados!.accaoNoFimDeTodaSubmissao = () async {
+    _mediadorCrudCadastrados.accaoNoFimDeTodaSubmissao = () async {
       JanelaUsuariosAderindoC aderindoC = Get.find();
       await aderindoC
           .encomendarRemocaoUsuarioAderindo(Usuario.fromJson(usuario));
     };
-    await _mediadorCrudCadastrados!.contruirMediador(
+    await _mediadorCrudCadastrados.contruirMediador(
         accaoNaFinalizacaoPreparo: (m) async {
       var listaSubRepositoriosAntiga = (await m.pegarListaSubRepositorios())!;
       await m.submeterRepositorioCompleto(
@@ -79,12 +77,12 @@ class ProvedorUsuarios implements ProvedorUsuariosI {
 
   @override
   Future<List<Map>> pegarListaUsuariosCadastrados() async {
-    _mediadorCrudCadastrados =
+    MediadorCrud _mediadorCrudCadastrados =
         MediadorCrud(await pegarAplicacaoC().pegarRotaUsuariosCadastrados(),
             accaoNaIndisponibilidadeServidor: () async {
       pegarListaUsuariosCadastrados();
     });
-    _mediadorCrudCadastrados!.contruirMediador(
+    _mediadorCrudCadastrados.contruirMediador(
         accaoNaFinalizacaoPreparo: (mediador) async {
       JanelaUsuariosCadastradosC janelaUsuariosCadastradosC = Get.find();
       await decarregar(janelaUsuariosCadastradosC, mediador);
@@ -97,8 +95,8 @@ class ProvedorUsuarios implements ProvedorUsuariosI {
   }
 
   @override
-  Future<void> removerUsuarioCadastrado(Map usuario) async {
-    _mediadorCrudCadastrados =
+  Future<void> removerUsuarioCadastrado(Map usuario, {Function(Erro? erro)? accaoNaFinalizacao}) async {
+    MediadorCrud _mediadorCrudCadastrados =
         MediadorCrud(await pegarAplicacaoC().pegarRotaUsuariosCadastrados(),
             accaoNaIndisponibilidadeServidor: () {
       mostrarDialogoDeInformacao("Servidor indisponível de momento!", true, () {
@@ -107,12 +105,12 @@ class ProvedorUsuarios implements ProvedorUsuariosI {
       });
     });
 
-    _mediadorCrudCadastrados!.accaoNoFimDeTodaSubmissao = () async {
+    _mediadorCrudCadastrados.accaoNoFimDeTodaSubmissao = () async {
       mostrarToast("Usuário eliminado!");
       mostrar("USUARIO REMOVIDO DOS ADERINDO");
     };
 
-    _mediadorCrudCadastrados!.contruirMediador(
+    _mediadorCrudCadastrados.contruirMediador(
         accaoNaFinalizacaoPreparo: (m) async {
       var listaSubRepositoriosAntiga = (await m.pegarListaSubRepositorios())!;
       await m.submeterRepositorioCompleto(usuario, listaSubRepositoriosAntiga,
@@ -121,8 +119,8 @@ class ProvedorUsuarios implements ProvedorUsuariosI {
   }
 
   @override
-  Future<void> removerUsuarioAderindo(Map usuario) async {
-    _mediadorCrudCadastrados =
+  Future<void> removerUsuarioAderindo(Map usuario, {Function(Erro? erro)? accaoNaFinalizacao}) async {
+    MediadorCrud _mediadorCrudCadastrados =
         MediadorCrud(await pegarAplicacaoC().pegarRotaUsuariosAderindo(),
             accaoNaIndisponibilidadeServidor: () {
       mostrarDialogoDeInformacao("Servidor indisponível de momento!", true, () {
@@ -130,10 +128,10 @@ class ProvedorUsuarios implements ProvedorUsuariosI {
         aderindoC.gerarDialogoParaRemocaoUsuario(Usuario.fromJson(usuario));
       });
     });
-    _mediadorCrudCadastrados!.accaoNoFimDeTodaSubmissao = () {
+    _mediadorCrudCadastrados.accaoNoFimDeTodaSubmissao = () {
       fecharDialogoCasoAberto();
     };
-    _mediadorCrudCadastrados!.contruirMediador(
+    _mediadorCrudCadastrados.contruirMediador(
         accaoNaFinalizacaoPreparo: (m) async {
       var listaSubRepositoriosAntiga = (await m.pegarListaSubRepositorios())!;
       await m.submeterRepositorioCompleto(usuario, listaSubRepositoriosAntiga,
@@ -142,8 +140,35 @@ class ProvedorUsuarios implements ProvedorUsuariosI {
   }
 
   @override
-  Future<void> adicionarUsuarioAderindo(Map usuario) {
+  Future<void> adicionarUsuarioAderindo(Map usuario, {Function(Erro? erro)? accaoNaFinalizacao}) {
     // TODO: implement adicionarUsuarioAderindo
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> actualizarrUsuarioCadastrado(Map usuario, {Function(Erro? erro)? accaoNaFinalizacao}) async {
+    MediadorCrud _mediadorCrudCadastrados =
+        MediadorCrud(await pegarAplicacaoC().pegarRotaUsuariosCadastrados(),
+            accaoNaIndisponibilidadeServidor: () async {
+      await actualizarrUsuarioCadastrado(usuario);
+    });
+    _mediadorCrudCadastrados.accaoNoFimDeTodaSubmissao = () async {
+      fecharDialogoCasoAberto();
+      JanelaUsuariosCadastradosC c = Get.find();
+      await c.encomendarDescargaUsuariosCadastrados();
+      mostrarToast("Usuário actualizado!");
+    };
+    _mediadorCrudCadastrados.contruirMediador(
+        accaoNaFinalizacaoPreparo: (m) async {
+      var listaSubRepositoriosAntiga = (await m.pegarListaSubRepositorios())!;
+      await m.submeterRepositorioCompleto(usuario, listaSubRepositoriosAntiga,
+          true, "email", () {}, OperacaoCrudEmRepositorio.editar);
+    });
+  }
+
+  @override
+  Future<Map?> fazerLogin(String rota, String email, String senha, {Function(Map? usuario)? accaoNaFinalizacao}) {
+    // TODO: implement fazerLogin
     throw UnimplementedError();
   }
 }

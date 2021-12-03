@@ -5,6 +5,7 @@ import 'package:componentes_visuais/componentes/modelo_item_lista.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'janela_usuarios_cadastrados_c.dart';
+import 'package:oku_sanga_mediador_funcional/oku_sanga_mediador_funcional.dart';
 
 class JanelaUsuariosCadastrados extends StatelessWidget {
   late JanelaUsuariosCadastradosC _c;
@@ -64,14 +65,37 @@ class JanelaUsuariosCadastrados extends StatelessWidget {
                     child: Wrap(
                       spacing: 10,
                       children: _c.lista.value!
-                          .map((element) => ModeloItemLista(
-                                itemRemovivel: true,
-                                tituloItem: element.nome,
-                                subTituloItem: element.email,
-                                metodoChamadoAoRemoverItem: () {
-                                  _c.gerarDialogoParaRemocaoUsuario(element);
-                                },
-                                metodoChamadoAoAceitarItem: () {},
+                          .map((element) => Stack(
+                                children: [
+                                  ModeloItemLista(
+                                    itemRemovivel: true,
+                                    tituloItem: element.nome,
+                                    subTituloItem: element.email,
+                                    metodoChamadoAoClicarItem: () {
+                                      
+                                    },
+                                    metodoChamadoAoRemoverItem: () {
+                                      _c.gerarDialogoParaRemocaoUsuario(
+                                          element);
+                                    },
+                                  ),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 30, right: 80),
+                                        child: InkWell(
+                                            onTap: () {
+                                              _c.gerarDialogoParaAdicionarRota(
+                                                  element);
+                                            },
+                                            child: Icon(Icons.add)),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ))
                           .toList(),
                     ),

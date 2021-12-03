@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loja_apps_adm/dominio/modelos/usuario.dart';
+import 'package:loja_apps/dominio/modelos/usuario.dart';
 
 class ItemUsuario extends StatelessWidget {
   final Usuario usuario;

@@ -1,13 +1,12 @@
 import 'package:componentes_visuais/componentes/layout_confirmacao_accao.dart';
+import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:get/get.dart';
-import 'package:loja_apps/vista/janelas/mercado/janela_mercado.dart';
+import 'package:loja_apps/vista/janelas/cadastro/janela_cadastro.dart';
 import 'package:loja_apps_adm/dominio/casos_uso/autenticacao_usuario.dart';
-import 'package:loja_apps_adm/dominio/modelos/usuario.dart';
+import 'package:loja_apps/dominio/modelos/usuario.dart';
 import 'package:loja_apps_adm/provedores/provedor_usuarios.dart';
 import 'package:loja_apps_adm/vista/contratos/autenticacao_usuario_i.dart';
-import 'package:loja_apps_adm/vista/dialogos/dialogos.dart';
 import 'package:loja_apps_adm/vista/janelas/usuarios_cadastrados/janela_usuarios_cadastrados.dart';
-import 'package:loja_apps/vista/janelas/cadastro/janela_cadastro.dart';
 
 class JanelaUsuariosAderindoC extends GetxController {
   Rx<List<Usuario>?> lista = Rx<List<Usuario>?>(null);

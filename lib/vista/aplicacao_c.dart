@@ -1,4 +1,6 @@
+import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:get/get.dart';
+import 'package:loja_apps/vista/dialogos/dialogos.dart';
 import 'package:loja_apps_adm/dominio/casos_uso/autenticao_sistema.dart';
 import 'package:loja_apps_adm/dominio/casos_uso/manipulacao_cache.dart';
 import 'package:loja_apps_adm/provedores/provedor_autenticacao.dart';
