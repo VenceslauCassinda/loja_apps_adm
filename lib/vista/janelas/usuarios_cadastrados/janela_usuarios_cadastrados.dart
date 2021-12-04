@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:componentes_visuais/componentes/campo_texto.dart';
 import 'package:componentes_visuais/componentes/modelo_item_lista.dart';
 import 'package:flutter/material.dart';
@@ -71,9 +69,8 @@ class JanelaUsuariosCadastrados extends StatelessWidget {
                                     itemRemovivel: true,
                                     tituloItem: element.nome,
                                     subTituloItem: element.email,
-                                    metodoChamadoAoClicarItem: () {
-                                      
-                                    },
+                                    itemComMenu: true,
+                                    metodoChamadoAoClicarItem: () {},
                                     metodoChamadoAoRemoverItem: () {
                                       _c.gerarDialogoParaRemocaoUsuario(
                                           element);
@@ -83,6 +80,30 @@ class JanelaUsuariosCadastrados extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
+                                      PopupMenuButton(
+                                        padding:
+                                            EdgeInsets.only(top: 30, right: 10),
+                                        itemBuilder: (context) {
+                                          return [
+                                            "Novo Servidor Disponível",
+                                            "Mudar Estado"
+                                          ]
+                                              .map((e) => PopupMenuItem(
+                                                    child: Text(e),
+                                                    value: e,
+                                                  ))
+                                              .toList();
+                                        },
+                                        onSelected: (String opcao) {
+                                          if (opcao.contains("Servidor")) {
+                                            _c.gerarDialogoParaAdicionarServidorArquivoDisponivel(
+                                                element);
+                                          } else {
+                                            _c.gerarDialogoParaMudarEstadoUsuario(
+                                                element);
+                                          }
+                                        },
+                                      ),
                                       Padding(
                                         padding: const EdgeInsets.only(
                                             top: 30, right: 80),

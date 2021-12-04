@@ -1,8 +1,11 @@
 import 'dart:math';
 
 import 'package:componentes_visuais/componentes/layout_confirmacao_accao.dart';
+import 'package:componentes_visuais/componentes/validadores/validadcao_campos.dart';
 import 'package:componentes_visuais/dialogo/dialogos.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:loja_apps/dominio/modelos/erros/erro_existencia_rota.dart';
 import 'package:loja_apps/vista/dialogos/dialogos.dart';
 import 'package:loja_apps_adm/dominio/casos_uso/autenticacao_usuario.dart';
 import 'package:loja_apps/dominio/modelos/area_usuario.dart';
@@ -91,6 +94,8 @@ class JanelaUsuariosCadastradosC extends GetxController {
         title: "",
         content: LayoutNovoTexto(
           this,
+          textoPadrao: usuario.estado == null ? null : "${usuario.estado}",
+          tipoCampoTexto: TipoCampoTexto.numero,
           label: "Estado do Usuário",
           accaoAoFinalizar: (String valor) async {
             int estado = -1;
@@ -112,7 +117,7 @@ class JanelaUsuariosCadastradosC extends GetxController {
           this,
           label: "Rota do Servidor",
           accaoAoFinalizar: (String rota) async {
-            await adicionarRota(rota, usuario);
+            await adicionarNovaRotaServidorDisponivel(rota, usuario);
           },
         ));
   }
@@ -134,9 +139,24 @@ class JanelaUsuariosCadastradosC extends GetxController {
     await _autenticacaoUsuarioI.actualizarrUsuarioCadastrado(novo.toJson());
   }
 
-  Future<void> adicionarNovaRotaServidorArquivo(
+  Future<void> adicionarNovaRotaServidorDisponivel(
       String rota, Usuario usuario) async {
-    JanelaAreaUsuarioC c = JanelaAreaUsuarioC(rota: usuario.rotaPrincipal);
-    c.adicionarNovaRotaServidorArquivo(rota);
+    JanelaAreaUsuarioC c;
+    try {
+      c = Get.find();
+      c.usuario = usuario;
+    } catch (e) {
+      c = JanelaAreaUsuarioC();
+      c.usuario = usuario;
+      Get.put(c);
+    }
+
+    try {
+      await c.adicionarNovaRotaServidorArquivo(rota);
+    } catch (e) {
+      if ((e is ErroExistenciaRota)) {
+        mostrarDialogoDeInformacao(e.mensagem);
+      }
+    }
   }
 }

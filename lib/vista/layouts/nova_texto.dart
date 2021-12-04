@@ -11,12 +11,14 @@ class LayoutNovoTexto extends StatelessWidget {
   ObservadorCampoTexto observadorCampoTexto = ObservadorCampoTexto();
 
   Function(String texto)? accaoAoFinalizar;
+  TipoCampoTexto? tipoCampoTexto;
 
   var janelaC;
   String texto = "";
+  String? textoPadrao;
   String? label;
 
-  LayoutNovoTexto(this.janelaC, {this.accaoAoFinalizar, this.label});
+  LayoutNovoTexto(this.janelaC, {this.accaoAoFinalizar, this.label, this.tipoCampoTexto, this.textoPadrao});
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +27,9 @@ class LayoutNovoTexto extends StatelessWidget {
       child: Column(
         children: [
           CampoTexto(
+            textoPadrao: textoPadrao,
             dicaParaCampo: label ?? "Rota",
-            tipoCampoTexto: TipoCampoTexto.nome,
+            tipoCampoTexto: tipoCampoTexto ?? TipoCampoTexto.nome,
             icone: Icon(Icons.text_fields),
             campoBordado: true,
             metodoChamadoNaInsersao: (String valor) {

@@ -11,7 +11,6 @@ import 'package:oku_sanga_mediador_funcional/entidades/operacao_crud_repositorio
 import 'package:oku_sanga_mediador_funcional/entidades/erros/todos_erros.dart';
 
 class ProvedorUsuarios implements ProvedorUsuariosI {
-
   @override
   Future<List<Map>> pegarListaUsuariosAderindo() async {
     MediadorCrud _mediadorCrudAderindo =
@@ -53,7 +52,8 @@ class ProvedorUsuarios implements ProvedorUsuariosI {
   }
 
   @override
-  Future<void> autorizarCadastroUsuario(Map usuario, {Function(Erro? erro)? accaoNaFinalizacao}) async {
+  Future<void> autorizarCadastroUsuario(Map usuario,
+      {Function(Erro? erro)? accaoNaFinalizacao}) async {
     MediadorCrud _mediadorCrudCadastrados =
         MediadorCrud(await pegarAplicacaoC().pegarRotaUsuariosCadastrados(),
             accaoNaIndisponibilidadeServidor: () async {
@@ -95,7 +95,8 @@ class ProvedorUsuarios implements ProvedorUsuariosI {
   }
 
   @override
-  Future<void> removerUsuarioCadastrado(Map usuario, {Function(Erro? erro)? accaoNaFinalizacao}) async {
+  Future<void> removerUsuarioCadastrado(Map usuario,
+      {Function(Erro? erro)? accaoNaFinalizacao}) async {
     MediadorCrud _mediadorCrudCadastrados =
         MediadorCrud(await pegarAplicacaoC().pegarRotaUsuariosCadastrados(),
             accaoNaIndisponibilidadeServidor: () {
@@ -119,7 +120,8 @@ class ProvedorUsuarios implements ProvedorUsuariosI {
   }
 
   @override
-  Future<void> removerUsuarioAderindo(Map usuario, {Function(Erro? erro)? accaoNaFinalizacao}) async {
+  Future<void> removerUsuarioAderindo(Map usuario,
+      {Function(Erro? erro)? accaoNaFinalizacao}) async {
     MediadorCrud _mediadorCrudCadastrados =
         MediadorCrud(await pegarAplicacaoC().pegarRotaUsuariosAderindo(),
             accaoNaIndisponibilidadeServidor: () {
@@ -140,13 +142,15 @@ class ProvedorUsuarios implements ProvedorUsuariosI {
   }
 
   @override
-  Future<void> adicionarUsuarioAderindo(Map usuario, {Function(Erro? erro)? accaoNaFinalizacao}) {
+  Future<void> adicionarUsuarioAderindo(Map usuario,
+      {Function(Erro? erro)? accaoNaFinalizacao}) {
     // TODO: implement adicionarUsuarioAderindo
     throw UnimplementedError();
   }
 
   @override
-  Future<void> actualizarrUsuarioCadastrado(Map usuario, {Function(Erro? erro)? accaoNaFinalizacao}) async {
+  Future<void> actualizarrUsuarioCadastrado(Map usuario,
+      {Function(Erro? erro)? accaoNaFinalizacao}) async {
     MediadorCrud _mediadorCrudCadastrados =
         MediadorCrud(await pegarAplicacaoC().pegarRotaUsuariosCadastrados(),
             accaoNaIndisponibilidadeServidor: () async {
@@ -154,8 +158,6 @@ class ProvedorUsuarios implements ProvedorUsuariosI {
     });
     _mediadorCrudCadastrados.accaoNoFimDeTodaSubmissao = () async {
       fecharDialogoCasoAberto();
-      JanelaUsuariosCadastradosC c = Get.find();
-      await c.encomendarDescargaUsuariosCadastrados();
       mostrarToast("Usuário actualizado!");
     };
     _mediadorCrudCadastrados.contruirMediador(
@@ -167,7 +169,8 @@ class ProvedorUsuarios implements ProvedorUsuariosI {
   }
 
   @override
-  Future<Map?> fazerLogin(String rota, String email, String senha, {Function(Map? usuario)? accaoNaFinalizacao}) {
+  Future<Map?> fazerLogin(String rota, String email, String senha,
+      {Function(Map? usuario)? accaoNaFinalizacao}) {
     // TODO: implement fazerLogin
     throw UnimplementedError();
   }
