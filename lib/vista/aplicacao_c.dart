@@ -4,7 +4,7 @@ import 'package:loja_apps/vista/dialogos/dialogos.dart';
 import 'package:loja_apps_adm/dominio/casos_uso/autenticao_sistema.dart';
 import 'package:loja_apps_adm/dominio/casos_uso/manipulacao_cache.dart';
 import 'package:loja_apps_adm/provedores/provedor_autenticacao.dart';
-import 'package:loja_apps_adm/provedores/provedor_usuarios.dart';
+import 'package:loja_apps/provedores/provedor_usuarios.dart';
 import 'package:loja_apps_adm/solucaoes_uteis/funcionais/cache/provedor_cache.dart';
 import 'package:loja_apps_adm/solucaoes_uteis/funcionais/execucao_funcoes.dart';
 import 'package:loja_apps_adm/vista/contratos/autenticao_sistema_i.dart';
@@ -30,7 +30,8 @@ class AplicacaoC extends GetxController {
 
     autenticaoSistemaI = AutenticaoSistema(ProvedorAutenticacao());
     manipulacaoCacheI = ManipulacaoCache(ProvedorCache());
-    Get.put(ProvedorUsuarios());
+    AplicacaoC aplicacaoC = Get.find();
+    Get.put(ProvedorUsuarios(await aplicacaoC.pegarRotaUsuariosCadastrados()));
     Get.put(JanelaUsuariosAderindoC());
     Get.put(JanelaUsuariosCadastradosC());
 
@@ -70,7 +71,8 @@ class AplicacaoC extends GetxController {
         JanelaUsuariosCadastradosC janelaUsuariosCadastradosC = Get.find();
         await janelaUsuariosCadastradosC
             .encomendarDescargaUsuariosCadastrados();
-            Get.put(p.ProvedorUsuarios(await pegarRotaUsuariosAderindo()),tag: "000");
+        Get.put(p.ProvedorUsuarios(await pegarRotaUsuariosAderindo()),
+            tag: "000");
       }
     });
   }

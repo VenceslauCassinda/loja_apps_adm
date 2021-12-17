@@ -1,9 +1,9 @@
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:get/get.dart';
-import 'package:loja_apps_adm/dominio/casos_uso/autenticacao_usuario.dart';
+import 'package:loja_apps/dominio/casos_uso/autenticacao_usuario.dart';
 import 'package:loja_apps/dominio/modelos/usuario.dart';
-import 'package:loja_apps_adm/provedores/provedor_usuarios.dart';
-import 'package:loja_apps_adm/vista/contratos/autenticacao_usuario_i.dart';
+import 'package:loja_apps/provedores/provedor_usuarios.dart';
+import 'package:loja_apps/vista/contratos/autenticacao_usuario_i.dart';
 import 'package:loja_apps_adm/vista/layouts/layout_carregando_circualr.dart';
 
 class JanelaCadastroC extends GetxController {

@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:loja_apps_adm/dominio/casos_uso/autenticacao_usuario.dart';
-import 'package:loja_apps_adm/provedores/provedor_usuarios.dart';
-import 'package:loja_apps_adm/vista/contratos/autenticacao_usuario_i.dart';
+import 'package:loja_apps/dominio/casos_uso/autenticacao_usuario.dart';
+import 'package:loja_apps/provedores/provedor_usuarios.dart';
+import 'package:loja_apps/vista/contratos/autenticacao_usuario_i.dart';
 import 'package:loja_apps_adm/vista/janelas/cadastro/janela_cadastro.dart';
 
 class JanelaLoginC extends GetxController {
@@ -38,6 +38,6 @@ class JanelaLoginC extends GetxController {
   Future<void> pegarListaUsuario() async {}
 
   void irParaJanelaCadastro() {
-    Get.to(()=>JanelaCadastro());
+    Get.to(() => JanelaCadastro());
   }
 }

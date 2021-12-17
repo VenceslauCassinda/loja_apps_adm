@@ -3,20 +3,17 @@ import 'dart:math';
 import 'package:componentes_visuais/componentes/layout_confirmacao_accao.dart';
 import 'package:componentes_visuais/componentes/validadores/validadcao_campos.dart';
 import 'package:componentes_visuais/dialogo/dialogos.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loja_apps/dominio/modelos/erros/erro_existencia_rota.dart';
 import 'package:loja_apps/vista/dialogos/dialogos.dart';
-import 'package:loja_apps_adm/dominio/casos_uso/autenticacao_usuario.dart';
-import 'package:loja_apps/dominio/modelos/area_usuario.dart';
-import 'package:loja_apps_adm/vista/contratos/manipulacao_usuario.dart';
-import 'package:loja_apps_adm/vista/janelas/area_usuario/janela_area_usuario_c.dart';
-import 'package:oku_sanga_mediador_funcional/oku_sanga_mediador_funcional.dart';
-import 'package:loja_apps_adm/dominio/casos_uso/manipular_usuario.dart';
+import 'package:loja_apps/vista/janelas/area_usuario/janela_painel_usuario_c.dart';
+import 'package:loja_apps/dominio/casos_uso/autenticacao_usuario.dart';
+import 'package:loja_apps/vista/contratos/manipulacao_usuario_i.dart';
+import 'package:loja_apps/dominio/casos_uso/manipular_usuario.dart';
 import 'package:loja_apps/dominio/modelos/usuario.dart';
-import 'package:loja_apps_adm/provedores/provedor_usuarios.dart';
-import 'package:loja_apps_adm/vista/contratos/autenticacao_usuario_i.dart';
-import 'package:loja_apps_adm/vista/layouts/nova_texto.dart';
+import 'package:loja_apps/provedores/provedor_usuarios.dart';
+import 'package:loja_apps/vista/contratos/autenticacao_usuario_i.dart';
+import 'package:componentes_visuais/componentes/nova_texto.dart';
 
 class JanelaUsuariosCadastradosC extends GetxController {
   Rx<List<Usuario>?> lista = Rx<List<Usuario>?>(null);
@@ -141,13 +138,12 @@ class JanelaUsuariosCadastradosC extends GetxController {
 
   Future<void> adicionarNovaRotaServidorDisponivel(
       String rota, Usuario usuario) async {
-    JanelaAreaUsuarioC c;
+    JanelaPainelUsuarioC c;
     try {
       c = Get.find();
       c.usuario = usuario;
     } catch (e) {
-      c = JanelaAreaUsuarioC();
-      c.usuario = usuario;
+      c = JanelaPainelUsuarioC(usuario);
       Get.put(c);
     }
 
