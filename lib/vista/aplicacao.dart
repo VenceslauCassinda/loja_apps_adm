@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -8,6 +10,10 @@ class Aplicacao extends StatelessWidget {
   late AplicacaoC _controlador;
 
   Aplicacao() {
+    inicializarControladorApp();
+  }
+
+  inicializarControladorApp() {
     _controlador = Get.put(AplicacaoC());
   }
 

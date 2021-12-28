@@ -1,24 +1,24 @@
 import 'package:componentes_visuais/componentes/layout_confirmacao_accao.dart';
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:get/get.dart';
-import 'package:loja_apps/vista/janelas/cadastro/janela_cadastro.dart';
-import 'package:loja_apps/dominio/casos_uso/autenticacao_usuario.dart';
-import 'package:loja_apps/dominio/modelos/usuario.dart';
-import 'package:loja_apps/provedores/provedor_usuarios.dart';
-import 'package:loja_apps/vista/contratos/autenticacao_usuario_i.dart';
+import 'package:loja_apps_adm/vista/janelas/cadastro/janela_cadastro.dart';
 import 'package:loja_apps_adm/vista/janelas/usuarios_cadastrados/janela_usuarios_cadastrados.dart';
+import 'package:modulo_autenticacao/casos_uso/autenticacao_usuario.dart';
+import 'package:modulo_autenticacao/modelos/usuario.dart';
+import 'package:modulo_autenticacao/provedores/provedor_usuarios.dart';
+
+import '../../aplicacao_c.dart';
 
 class JanelaUsuariosAderindoC extends GetxController {
   Rx<List<Usuario>?> lista = Rx<List<Usuario>?>(null);
-  late AutenticacaoUsuarioI _autenticacaoUsuarioI;
+  late AutenticacaoUsuario _autenticacaoUsuarioI;
 
   JanelaUsuariosAderindoC() {}
 
   @override
   void onInit() async {
     super.onInit();
-    ProvedorUsuarios provedorUsuarios = Get.find();
-    _autenticacaoUsuarioI = AutenticacaoUsuario(provedorUsuarios);
+    _autenticacaoUsuarioI = AutenticacaoUsuario(ProvedorUsuarios());
   }
 
   void mudarValorLista(List<Usuario>? dados) {
@@ -27,11 +27,23 @@ class JanelaUsuariosAderindoC extends GetxController {
 
   Future<void> encomendarDescargaUsuariosAderindo() async {
     mudarValorLista(null);
-    await _autenticacaoUsuarioI.pegarListaUsuariosAderindo();
+    AplicacaoC aplicacaoC = Get.find();
+    _autenticacaoUsuarioI.aplicacaoC = aplicacaoC;
+    await _autenticacaoUsuarioI.pegarListaUsuariosAderindo(
+        accaoNaFinalizacao: (resposta) {
+      mudarValorLista(resposta);
+    });
   }
 
   Future<void> encomendarAutorizacaoCadastroUsuario(Usuario usuario) async {
-    await _autenticacaoUsuarioI.autorizarCadastroUsuario(usuario);
+    await _autenticacaoUsuarioI.autorizarCadastroUsuario(usuario,
+        accaoNaFinalizacao: (erro) {
+      if (erro != null) {
+        mostrarDialogoDeInformacao(erro.mensagem);
+      } else {
+        fecharDialogoCasoAberto();
+      }
+    });
   }
 
   void irParaJanelaUsuariosCadastrados() {
@@ -63,7 +75,12 @@ class JanelaUsuariosAderindoC extends GetxController {
   Future<void> encomendarRemocaoUsuarioAderindo(Usuario usuario) async {
     lista.value!.removeWhere((element) => element.email == usuario.email);
     actualizarEstado();
-    await _autenticacaoUsuarioI.removerUsuarioAderindo(usuario);
+    await _autenticacaoUsuarioI.removerUsuarioAderindo(usuario,
+        accaoNaFinalizacao: (erro) {
+      if (erro != null) {
+        mostrarDialogoDeInformacao(erro.mensagem);
+      }
+    });
   }
 
   void actualizarEstado() {

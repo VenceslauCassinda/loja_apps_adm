@@ -1,21 +1,16 @@
+import 'dart:developer';
+
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:get/get.dart';
-import 'package:loja_apps/vista/dialogos/dialogos.dart';
 import 'package:loja_apps_adm/dominio/casos_uso/autenticao_sistema.dart';
 import 'package:loja_apps_adm/dominio/casos_uso/manipulacao_cache.dart';
 import 'package:loja_apps_adm/provedores/provedor_autenticacao.dart';
-import 'package:loja_apps/provedores/provedor_usuarios.dart';
 import 'package:loja_apps_adm/solucaoes_uteis/funcionais/cache/provedor_cache.dart';
 import 'package:loja_apps_adm/solucaoes_uteis/funcionais/execucao_funcoes.dart';
 import 'package:loja_apps_adm/vista/contratos/autenticao_sistema_i.dart';
-import 'package:loja_apps_adm/vista/dialogos/dialogos.dart';
-import 'package:loja_apps_adm/vista/janelas/usuarios_aderindo/janela_usuarios_aderindo.dart';
-import 'package:loja_apps_adm/vista/janelas/usuarios_cadastrados/janela_usuarios_cadastrados_c.dart';
 import 'package:oku_sanga_mediador_funcional/entidades/erros/todos_erros.dart';
 import 'package:oku_sanga_mediador_funcional/utils/mensagens_sistema.dart';
 import 'package:oku_sanga_mediador_funcional/cotratos/contratos_por_interface.dart';
-import 'package:loja_apps/provedores/provedor_usuarios.dart' as p;
-
 import 'janelas/usuarios_aderindo/janela_usuarios_aderindo_c.dart';
 
 class AplicacaoC extends GetxController {
@@ -30,10 +25,6 @@ class AplicacaoC extends GetxController {
 
     autenticaoSistemaI = AutenticaoSistema(ProvedorAutenticacao());
     manipulacaoCacheI = ManipulacaoCache(ProvedorCache());
-    AplicacaoC aplicacaoC = Get.find();
-    Get.put(ProvedorUsuarios(await aplicacaoC.pegarRotaUsuariosCadastrados()));
-    Get.put(JanelaUsuariosAderindoC());
-    Get.put(JanelaUsuariosCadastradosC());
 
     await autenticarSistema();
   }
@@ -68,11 +59,6 @@ class AplicacaoC extends GetxController {
         }, chaveCacheConfiguracaoApp);
         JanelaUsuariosAderindoC janelaUsuariosAderindoC = Get.find();
         await janelaUsuariosAderindoC.encomendarDescargaUsuariosAderindo();
-        JanelaUsuariosCadastradosC janelaUsuariosCadastradosC = Get.find();
-        await janelaUsuariosCadastradosC
-            .encomendarDescargaUsuariosCadastrados();
-        Get.put(p.ProvedorUsuarios(await pegarRotaUsuariosAderindo()),
-            tag: "000");
       }
     });
   }
@@ -82,15 +68,19 @@ class AplicacaoC extends GetxController {
     await autenticarSistema();
   }
 
-  Future<String> pegarRotaUsuariosAderindo() async {
+  Future<String> pegarRotaUsuarioAderindo() async {
     Map configuracao = (await manipulacaoCacheI.pegarDadosDaChave(
         chaveCacheConfiguracaoApp))![chaveCacheConfiguracaoApp];
     return configuracao["rotas"]["usuarios_aderindo"];
   }
 
-  Future<String> pegarRotaUsuariosCadastrados() async {
+  Future<String> pegarRotaUsuarioCadastrados() async {
     Map configuracao = (await manipulacaoCacheI.pegarDadosDaChave(
         chaveCacheConfiguracaoApp))![chaveCacheConfiguracaoApp];
     return configuracao["rotas"]["usuarios_cadastrados"];
   }
+}
+
+void mostrarToast(String message) {
+  log(message);
 }

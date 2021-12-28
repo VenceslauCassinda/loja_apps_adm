@@ -142,6 +142,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "8.0.8"
+  focus_detector:
+    dependency: transitive
+    description:
+      name: focus_detector
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   get:
     dependency: transitive
     description:
@@ -163,13 +170,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.3"
-  loja_apps:
-    dependency: "direct main"
-    description:
-      path: "../loja_apps"
-      relative: true
-    source: path
-    version: "1.0.0+1"
   matcher:
     dependency: transitive
     description:
@@ -177,6 +177,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.12.10"
+  mediador_visual:
+    dependency: transitive
+    description:
+      path: "../mediador_visual"
+      relative: true
+    source: path
+    version: "0.0.1"
   meta:
     dependency: transitive
     description:
@@ -184,6 +191,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.3.0"
+  modulo_autenticacao:
+    dependency: "direct main"
+    description:
+      path: "../modulo_autenticacao"
+      relative: true
+    source: path
+    version: "0.0.1"
   oku_sanga_mediador_funcional:
     dependency: transitive
     description:
@@ -233,6 +247,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.3"
+  permission_handler:
+    dependency: transitive
+    description:
+      name: permission_handler
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "8.1.6"
+  permission_handler_platform_interface:
+    dependency: transitive
+    description:
+      name: permission_handler_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.6.1"
   platform:
     dependency: transitive
     description:
@@ -357,6 +385,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
+  visibility_detector:
+    dependency: transitive
+    description:
+      name: visibility_detector
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.2"
   win32:
     dependency: transitive
     description:

@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:loja_apps/dominio/casos_uso/autenticacao_usuario.dart';
-import 'package:loja_apps/provedores/provedor_usuarios.dart';
-import 'package:loja_apps/vista/contratos/autenticacao_usuario_i.dart';
 import 'package:loja_apps_adm/vista/janelas/cadastro/janela_cadastro.dart';
+import 'package:modulo_autenticacao/casos_uso/autenticacao_usuario.dart';
+import 'package:modulo_autenticacao/contratos/autenticacao_usuario_i.dart';
+import 'package:modulo_autenticacao/provedores/provedor_usuarios.dart';
+
+import '../../aplicacao_c.dart';
 
 class JanelaLoginC extends GetxController {
   bool repositorioWebPreparado = false;
@@ -15,8 +17,9 @@ class JanelaLoginC extends GetxController {
 
   @override
   void onInit() async {
-    ProvedorUsuarios provedorUsuarios = Get.find();
-    _autenticacaoUsuarioI = AutenticacaoUsuario(provedorUsuarios);
+    _autenticacaoUsuarioI = AutenticacaoUsuario(
+      ProvedorUsuarios(),
+    );
     super.onInit();
   }
 

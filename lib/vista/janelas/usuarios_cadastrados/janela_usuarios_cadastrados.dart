@@ -3,12 +3,11 @@ import 'package:componentes_visuais/componentes/modelo_item_lista.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'janela_usuarios_cadastrados_c.dart';
-import 'package:oku_sanga_mediador_funcional/oku_sanga_mediador_funcional.dart';
 
 class JanelaUsuariosCadastrados extends StatelessWidget {
   late JanelaUsuariosCadastradosC _c;
   JanelaUsuariosCadastrados() {
-    _c = Get.find();
+    _c = Get.put(JanelaUsuariosCadastradosC());
   }
 
   @override

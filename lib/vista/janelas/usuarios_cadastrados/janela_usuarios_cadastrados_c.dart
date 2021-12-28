@@ -1,23 +1,20 @@
-import 'dart:math';
+import 'dart:developer';
 
 import 'package:componentes_visuais/componentes/layout_confirmacao_accao.dart';
 import 'package:componentes_visuais/componentes/validadores/validadcao_campos.dart';
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:get/get.dart';
-import 'package:loja_apps/dominio/modelos/erros/erro_existencia_rota.dart';
-import 'package:loja_apps/vista/dialogos/dialogos.dart';
-import 'package:loja_apps/vista/janelas/area_usuario/janela_painel_usuario_c.dart';
-import 'package:loja_apps/dominio/casos_uso/autenticacao_usuario.dart';
-import 'package:loja_apps/vista/contratos/manipulacao_usuario_i.dart';
-import 'package:loja_apps/dominio/casos_uso/manipular_usuario.dart';
-import 'package:loja_apps/dominio/modelos/usuario.dart';
-import 'package:loja_apps/provedores/provedor_usuarios.dart';
-import 'package:loja_apps/vista/contratos/autenticacao_usuario_i.dart';
 import 'package:componentes_visuais/componentes/nova_texto.dart';
+import 'package:modulo_autenticacao/casos_uso/autenticacao_usuario.dart';
+import 'package:modulo_autenticacao/casos_uso/manipular_usuario.dart';
+import 'package:modulo_autenticacao/contratos/manipulacao_usuario_i.dart';
+import 'package:modulo_autenticacao/modelos/usuario.dart';
+import 'package:modulo_autenticacao/provedores/provedor_usuarios.dart';
+import '../../aplicacao_c.dart';
 
 class JanelaUsuariosCadastradosC extends GetxController {
   Rx<List<Usuario>?> lista = Rx<List<Usuario>?>(null);
-  late AutenticacaoUsuarioI _autenticacaoUsuarioI;
+  late AutenticacaoUsuario _autenticacaoUsuarioI;
   late ManipularUsuarioI _manipularUsuario;
 
   @override
@@ -26,10 +23,10 @@ class JanelaUsuariosCadastradosC extends GetxController {
     inicializarDependencia();
   }
 
-  void inicializarDependencia() {
+  Future<void> inicializarDependencia() async {
     _manipularUsuario = ManipularUsuario();
-    ProvedorUsuarios provedorUsuarios = Get.find();
-    _autenticacaoUsuarioI = AutenticacaoUsuario(provedorUsuarios);
+    _autenticacaoUsuarioI = AutenticacaoUsuario(ProvedorUsuarios());
+    await encomendarDescargaUsuariosCadastrados();
   }
 
   void mudarValorLista(List<Usuario>? dados) {
@@ -38,13 +35,19 @@ class JanelaUsuariosCadastradosC extends GetxController {
 
   Future<void> encomendarDescargaUsuariosCadastrados() async {
     mudarValorLista(null);
-    await _autenticacaoUsuarioI.pegarListaUsuariosCadastrados();
+    AplicacaoC aplicacaoC = Get.find();
+    _autenticacaoUsuarioI.aplicacaoC = aplicacaoC;
+    await _autenticacaoUsuarioI.pegarListaUsuariosCadastrados(
+        accaoNaFinalizacao: (resposta) {
+      mudarValorLista(resposta);
+    });
   }
 
   Future<void> encomendarRemocaoUsuarioCadastrado(Usuario usuario) async {
     lista.value!.removeWhere((element) => element.email == usuario.email);
     actualizarEstado();
-    await _autenticacaoUsuarioI.removerUsuarioCadastrado(usuario);
+    await _autenticacaoUsuarioI.removerUsuarioCadastrado(usuario,
+        accaoNaFinalizacao: (erro) {});
   }
 
   void actualizarEstado() {
@@ -138,21 +141,25 @@ class JanelaUsuariosCadastradosC extends GetxController {
 
   Future<void> adicionarNovaRotaServidorDisponivel(
       String rota, Usuario usuario) async {
-    JanelaPainelUsuarioC c;
-    try {
-      c = Get.find();
-      c.usuario = usuario;
-    } catch (e) {
-      c = JanelaPainelUsuarioC(usuario);
-      Get.put(c);
-    }
+    // JanelaPainelUsuarioC c;
+    // try {
+    //   c = Get.find();
+    //   c.usuario = usuario;
+    // } catch (e) {
+    //   c = JanelaPainelUsuarioC(usuario);
+    //   Get.put(c);
+    // }
 
-    try {
-      await c.adicionarNovaRotaServidorArquivo(rota);
-    } catch (e) {
-      if ((e is ErroExistenciaRota)) {
-        mostrarDialogoDeInformacao(e.mensagem);
-      }
-    }
+    // try {
+    //   await c.adicionarNovaRotaServidorArquivo(rota);
+    // } catch (e) {
+    //   if ((e is ErroExistenciaRota)) {
+    //     mostrarDialogoDeInformacao(e.mensagem);
+    //   }
+    // }
   }
+}
+
+void mostrarToast(String message) {
+  log(message);
 }

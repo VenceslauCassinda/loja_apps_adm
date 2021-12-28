@@ -27,8 +27,8 @@ dependencies:
     path: ../dependencias_loja_apps
   componentes_visuais: 
     path: ../componentes_visuais
-  loja_apps: 
-    path: ../loja_apps
+  modulo_autenticacao: 
+    path: ../modulo_autenticacao
 
 
   # The following adds the Cupertino Icons font to your application.

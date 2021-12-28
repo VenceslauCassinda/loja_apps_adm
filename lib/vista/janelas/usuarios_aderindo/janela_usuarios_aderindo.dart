@@ -12,7 +12,7 @@ import 'janela_usuarios_aderindo_c.dart';
 class JanelaUsuariosAderindo extends StatelessWidget {
   late JanelaUsuariosAderindoC _c;
   JanelaUsuariosAderindo() {
-    _c = Get.find();
+    _c = Get.put(JanelaUsuariosAderindoC());
   }
 
   @override

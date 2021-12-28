@@ -9,7 +9,6 @@ class ProvedorCache implements ProvedorCacheI {
 
   @override
   Future<String?> pegarDadosDaChave(String chave) async {
-    GetMaterialApp();
     var resultado = (await pegarSharedPreferences()).get(chave);
     if (resultado is String) {
       return resultado;
