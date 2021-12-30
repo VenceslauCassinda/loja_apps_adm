@@ -6,7 +6,6 @@ import 'package:loja_apps_adm/vista/janelas/usuarios_cadastrados/janela_usuarios
 import 'package:modulo_autenticacao/casos_uso/autenticacao_usuario.dart';
 import 'package:modulo_autenticacao/modelos/usuario.dart';
 import 'package:modulo_autenticacao/provedores/provedor_usuarios.dart';
-
 import '../../aplicacao_c.dart';
 
 class JanelaUsuariosAderindoC extends GetxController {
@@ -29,14 +28,14 @@ class JanelaUsuariosAderindoC extends GetxController {
     mudarValorLista(null);
     AplicacaoC aplicacaoC = Get.find();
     _autenticacaoUsuarioI.aplicacaoC = aplicacaoC;
-    await _autenticacaoUsuarioI.pegarListaUsuariosAderindo(
+    await _autenticacaoUsuarioI.pegarListaUsuariosAderindo((await pegarAplicacaoC().pegarRotaUsuarioAderindo()),
         accaoNaFinalizacao: (resposta) {
       mudarValorLista(resposta);
     });
   }
 
   Future<void> encomendarAutorizacaoCadastroUsuario(Usuario usuario) async {
-    await _autenticacaoUsuarioI.autorizarCadastroUsuario(usuario,
+    await _autenticacaoUsuarioI.autorizarCadastroUsuario((await pegarAplicacaoC().pegarRotaUsuarioCadastrados()), usuario,
         accaoNaFinalizacao: (erro) {
       if (erro != null) {
         mostrarDialogoDeInformacao(erro.mensagem);
@@ -75,7 +74,7 @@ class JanelaUsuariosAderindoC extends GetxController {
   Future<void> encomendarRemocaoUsuarioAderindo(Usuario usuario) async {
     lista.value!.removeWhere((element) => element.email == usuario.email);
     actualizarEstado();
-    await _autenticacaoUsuarioI.removerUsuarioAderindo(usuario,
+    await _autenticacaoUsuarioI.removerUsuarioAderindo((await pegarAplicacaoC().pegarRotaUsuarioAderindo()), usuario,
         accaoNaFinalizacao: (erro) {
       if (erro != null) {
         mostrarDialogoDeInformacao(erro.mensagem);

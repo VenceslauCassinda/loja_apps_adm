@@ -1,5 +1,6 @@
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:get/get.dart';
+import 'package:loja_apps_adm/vista/aplicacao_c.dart';
 import 'package:loja_apps_adm/vista/layouts/layout_carregando_circualr.dart';
 import 'package:modulo_autenticacao/casos_uso/autenticacao_usuario.dart';
 import 'package:modulo_autenticacao/contratos/autenticacao_usuario_i.dart';
@@ -25,8 +26,9 @@ class JanelaCadastroC extends GetxController {
 
   Future<void> orientarRealizacaoCadastro(
       String nome, String email, String palavraPasse) async {
-    await _autenticacaoUsuarioI.adicionarUsuarioAderindo(
-        Usuario(nome: "NomeUsuarioTeste", email: "e11"));
+    await _autenticacaoUsuarioI.adicionarUsuarioAderindo((await pegarAplicacaoC().pegarRotaUsuarioAderindo()),
+        Usuario(nome: "NomeUsuarioTeste", email: "e11"),
+        accaoNaFinalizacao: (erro) {});
   }
 
   _gerarDialogoPedido() {

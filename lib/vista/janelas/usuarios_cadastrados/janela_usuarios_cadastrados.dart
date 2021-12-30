@@ -85,7 +85,9 @@ class JanelaUsuariosCadastrados extends StatelessWidget {
                                         itemBuilder: (context) {
                                           return [
                                             "Novo Servidor Disponível",
-                                            "Mudar Estado"
+                                            "Novo Repositório App",
+                                            "Mudar Estado",
+                                            "Copiar Nome e Senha",
                                           ]
                                               .map((e) => PopupMenuItem(
                                                     child: Text(e),
@@ -97,9 +99,22 @@ class JanelaUsuariosCadastrados extends StatelessWidget {
                                           if (opcao.contains("Servidor")) {
                                             _c.gerarDialogoParaAdicionarServidorArquivoDisponivel(
                                                 element);
-                                          } else {
+                                            return;
+                                          }
+                                          if (opcao.contains("Estado")) {
                                             _c.gerarDialogoParaMudarEstadoUsuario(
                                                 element);
+                                            return;
+                                          }
+                                          if (opcao.contains("Copiar")) {
+                                            _c.copiarNomeSenhaParaAreaUsuario(
+                                                element);
+                                            return;
+                                          }
+                                          if (opcao.contains("Repositório")) {
+                                            _c.gerarDialogoParaAdicionarRepositorioApp(
+                                                element);
+                                            return;
                                           }
                                         },
                                       ),
@@ -108,7 +123,7 @@ class JanelaUsuariosCadastrados extends StatelessWidget {
                                             top: 30, right: 80),
                                         child: InkWell(
                                             onTap: () {
-                                              _c.gerarDialogoParaAdicionarRota(
+                                              _c.gerarDialogoParaAdicionarRotaAreaUsuario(
                                                   element);
                                             },
                                             child: Icon(Icons.add)),

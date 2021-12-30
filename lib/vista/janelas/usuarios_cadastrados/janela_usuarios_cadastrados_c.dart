@@ -1,21 +1,24 @@
-import 'dart:developer';
-
 import 'package:componentes_visuais/componentes/layout_confirmacao_accao.dart';
 import 'package:componentes_visuais/componentes/validadores/validadcao_campos.dart';
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:get/get.dart';
-import 'package:componentes_visuais/componentes/nova_texto.dart';
+import 'package:componentes_visuais/componentes/novo_texto.dart';
 import 'package:modulo_autenticacao/casos_uso/autenticacao_usuario.dart';
+import 'package:modulo_autenticacao/casos_uso/manipulacao_area_usuario.dart';
 import 'package:modulo_autenticacao/casos_uso/manipular_usuario.dart';
+import 'package:modulo_autenticacao/contratos/autenticacao_usuario_i.dart';
+import 'package:modulo_autenticacao/contratos/manipulacao_area_usuario_i.dart';
 import 'package:modulo_autenticacao/contratos/manipulacao_usuario_i.dart';
 import 'package:modulo_autenticacao/modelos/usuario.dart';
 import 'package:modulo_autenticacao/provedores/provedor_usuarios.dart';
+import 'package:modulo_autenticacao/provedores/provedor_area_usuario.dart';
 import '../../aplicacao_c.dart';
 
 class JanelaUsuariosCadastradosC extends GetxController {
   Rx<List<Usuario>?> lista = Rx<List<Usuario>?>(null);
-  late AutenticacaoUsuario _autenticacaoUsuarioI;
+  late AutenticacaoUsuarioI _autenticacaoUsuarioI;
   late ManipularUsuarioI _manipularUsuario;
+  late ManipulacaoAreaUsuarioI _manipulacaoAreaUsuarioI;
 
   @override
   void onInit() async {
@@ -26,6 +29,7 @@ class JanelaUsuariosCadastradosC extends GetxController {
   Future<void> inicializarDependencia() async {
     _manipularUsuario = ManipularUsuario();
     _autenticacaoUsuarioI = AutenticacaoUsuario(ProvedorUsuarios());
+    _manipulacaoAreaUsuarioI = ManipulacaoAreaUsuario(ProvedorAreaUsuario());
     await encomendarDescargaUsuariosCadastrados();
   }
 
@@ -35,9 +39,8 @@ class JanelaUsuariosCadastradosC extends GetxController {
 
   Future<void> encomendarDescargaUsuariosCadastrados() async {
     mudarValorLista(null);
-    AplicacaoC aplicacaoC = Get.find();
-    _autenticacaoUsuarioI.aplicacaoC = aplicacaoC;
     await _autenticacaoUsuarioI.pegarListaUsuariosCadastrados(
+        (await pegarAplicacaoC().pegarRotaUsuarioCadastrados()),
         accaoNaFinalizacao: (resposta) {
       mudarValorLista(resposta);
     });
@@ -46,7 +49,8 @@ class JanelaUsuariosCadastradosC extends GetxController {
   Future<void> encomendarRemocaoUsuarioCadastrado(Usuario usuario) async {
     lista.value!.removeWhere((element) => element.email == usuario.email);
     actualizarEstado();
-    await _autenticacaoUsuarioI.removerUsuarioCadastrado(usuario,
+    await _autenticacaoUsuarioI.removerUsuarioCadastrado(
+        (await pegarAplicacaoC().pegarRotaUsuarioCadastrados()), usuario,
         accaoNaFinalizacao: (erro) {});
   }
 
@@ -75,7 +79,7 @@ class JanelaUsuariosCadastradosC extends GetxController {
         ));
   }
 
-  gerarDialogoParaAdicionarRota(Usuario usuario) {
+  gerarDialogoParaAdicionarRotaAreaUsuario(Usuario usuario) {
     Get.defaultDialog(
         barrierDismissible: true,
         title: "",
@@ -83,7 +87,7 @@ class JanelaUsuariosCadastradosC extends GetxController {
           this,
           label: "Área do usuário",
           accaoAoFinalizar: (String rota) async {
-            await adicionarRota(rota, usuario);
+            await adicionarRotaAreaUsuario(rota, usuario);
           },
         ));
   }
@@ -94,6 +98,7 @@ class JanelaUsuariosCadastradosC extends GetxController {
         title: "",
         content: LayoutNovoTexto(
           this,
+          areaOuCampoTexto: false,
           textoPadrao: usuario.estado == null ? null : "${usuario.estado}",
           tipoCampoTexto: TipoCampoTexto.numero,
           label: "Estado do Usuário",
@@ -101,7 +106,7 @@ class JanelaUsuariosCadastradosC extends GetxController {
             int estado = -1;
             try {
               estado = int.parse(valor);
-              await adicionarEstado(estado, usuario);
+              await mudarEstadoUsuario(estado, usuario);
             } catch (e) {
               mostrarToast("Estado inválido!");
             }
@@ -115,51 +120,85 @@ class JanelaUsuariosCadastradosC extends GetxController {
         title: "",
         content: LayoutNovoTexto(
           this,
-          label: "Rota do Servidor",
+          label: "Rota do Servidor Arquivo Disponível",
           accaoAoFinalizar: (String rota) async {
             await adicionarNovaRotaServidorDisponivel(rota, usuario);
           },
         ));
   }
 
-  Future<void> adicionarRota(String rota, Usuario usuario) async {
+  gerarDialogoParaAdicionarRepositorioApp(Usuario usuario) {
+    Get.defaultDialog(
+        barrierDismissible: true,
+        title: "",
+        content: LayoutNovoTexto(
+          this,
+          label: "Rota do Repositório de App",
+          accaoAoFinalizar: (String rota) async {
+            await adicionarNovaRotaRepositorioApp(rota, usuario);
+          },
+        ));
+  }
+
+  Future<void> adicionarRotaAreaUsuario(String rota, Usuario usuario) async {
     if (usuario.rotaPrincipal == null) {
       usuario =
           _manipularUsuario.adicionarRotaPincipalParaUsuario(rota, usuario);
-      await _autenticacaoUsuarioI
-          .actualizarrUsuarioCadastrado(usuario.toJson());
+      await _autenticacaoUsuarioI.actualizarrUsuarioCadastrado(
+          await pegarAplicacaoC().pegarRotaUsuarioCadastrados(),
+          usuario.toJson(), accaoNaFinalizacao: (erro) {
+        mostrarToast("Rota Principal do usuario ${usuario.nome} mudada!");
+      });
     } else {
       mostrarDialogoDeInformacao(
           "O Usuário já possui uma rota Principal", true);
     }
   }
 
-  Future<void> adicionarEstado(int estado, Usuario usuario) async {
-    Usuario novo = _manipularUsuario.adicionarEstadoUsuario(estado, usuario);
-    await _autenticacaoUsuarioI.actualizarrUsuarioCadastrado(novo.toJson());
+  Future<void> copiarNomeSenhaParaAreaUsuario(Usuario usuario) async {
+    await _manipulacaoAreaUsuarioI.pegarDadosDaAreaUsuario(
+        usuario.rotaPrincipal!, accaoNaFinalizacao: (resposta) async {
+      var nova =
+          _manipulacaoAreaUsuarioI.mudarNomeUsuario(usuario.nome!, resposta);
+      nova =
+          _manipulacaoAreaUsuarioI.mudarSenhaUsuario(usuario.senha!, resposta);
+      await _manipulacaoAreaUsuarioI.actualizarAreaUsuario(
+          usuario.rotaPrincipal!, nova);
+    });
+  }
+
+  Future<void> mudarEstadoUsuario(int estado, Usuario usuario) async {
+    Usuario novo = _manipularUsuario.mudarEstadoUsuario(estado, usuario);
+    await _autenticacaoUsuarioI.actualizarrUsuarioCadastrado(
+        await pegarAplicacaoC().pegarRotaUsuarioCadastrados(), novo.toJson(),
+        accaoNaFinalizacao: (erro) {
+      mostrarToast("Estado do usuario ${usuario.nome} mudado para $estado");
+    });
+  }
+
+  Future<void> adicionarNovaRotaRepositorioApp(
+      String rota, Usuario usuario) async {
+    _manipulacaoAreaUsuarioI.pegarDadosDaAreaUsuario(usuario.rotaPrincipal!,
+        accaoNaFinalizacao: (areaUsuario) async {
+      if (areaUsuario.listaRepositoriosApps == null) {
+        areaUsuario.listaRepositoriosApps = [];
+      }
+      areaUsuario.listaRepositoriosApps!.add(rota);
+      await _manipulacaoAreaUsuarioI.actualizarAreaUsuario(
+          usuario.rotaPrincipal!, areaUsuario);
+    });
   }
 
   Future<void> adicionarNovaRotaServidorDisponivel(
       String rota, Usuario usuario) async {
-    // JanelaPainelUsuarioC c;
-    // try {
-    //   c = Get.find();
-    //   c.usuario = usuario;
-    // } catch (e) {
-    //   c = JanelaPainelUsuarioC(usuario);
-    //   Get.put(c);
-    // }
-
-    // try {
-    //   await c.adicionarNovaRotaServidorArquivo(rota);
-    // } catch (e) {
-    //   if ((e is ErroExistenciaRota)) {
-    //     mostrarDialogoDeInformacao(e.mensagem);
-    //   }
-    // }
+    _manipulacaoAreaUsuarioI.pegarDadosDaAreaUsuario(usuario.rotaPrincipal!,
+        accaoNaFinalizacao: (areaUsuario) async {
+      if (areaUsuario.listaServidoresArquivo == null) {
+        areaUsuario.listaServidoresArquivo = [];
+      }
+      areaUsuario.listaRepositoriosApps!.add(rota);
+      await _manipulacaoAreaUsuarioI.actualizarAreaUsuario(
+          usuario.rotaPrincipal!, areaUsuario);
+    });
   }
-}
-
-void mostrarToast(String message) {
-  log(message);
 }

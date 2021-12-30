@@ -2,12 +2,12 @@ import 'dart:developer';
 
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:get/get.dart';
-import 'package:loja_apps_adm/dominio/casos_uso/autenticao_sistema.dart';
 import 'package:loja_apps_adm/dominio/casos_uso/manipulacao_cache.dart';
-import 'package:loja_apps_adm/provedores/provedor_autenticacao.dart';
 import 'package:loja_apps_adm/solucaoes_uteis/funcionais/cache/provedor_cache.dart';
 import 'package:loja_apps_adm/solucaoes_uteis/funcionais/execucao_funcoes.dart';
-import 'package:loja_apps_adm/vista/contratos/autenticao_sistema_i.dart';
+import 'package:modulo_autenticacao/casos_uso/autenticao_sistema.dart';
+import 'package:modulo_autenticacao/contratos/autenticao_sistema_i.dart';
+import 'package:modulo_autenticacao/provedores/provedor_autenticacao.dart';
 import 'package:oku_sanga_mediador_funcional/entidades/erros/todos_erros.dart';
 import 'package:oku_sanga_mediador_funcional/utils/mensagens_sistema.dart';
 import 'package:oku_sanga_mediador_funcional/cotratos/contratos_por_interface.dart';
@@ -83,4 +83,8 @@ class AplicacaoC extends GetxController {
 
 void mostrarToast(String message) {
   log(message);
+}
+
+AplicacaoC pegarAplicacaoC() {
+  return Get.find();
 }
