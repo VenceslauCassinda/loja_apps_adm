@@ -62,6 +62,7 @@ class CorpoJanelaCadastro extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: CampoTexto(
+              context: context,
               campoBordado: false,
               icone: Icon(Icons.text_fields),
               dicaParaCampo: "Nome",
@@ -101,6 +102,7 @@ class CorpoJanelaCadastro extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: CampoTexto(
+              context: context,
               campoBordado: false,
               icone: Icon(Icons.email),
               dicaParaCampo: "Email",
@@ -144,6 +146,7 @@ class CorpoJanelaCadastro extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: CampoTexto(
+              context: context,
               campoBordado: false,
               icone: Icon(Icons.lock),
               tipoCampoTexto: TipoCampoTexto.palavra_passe,
@@ -185,6 +188,7 @@ class CorpoJanelaCadastro extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: CampoTexto(
+              context: context,
               campoBordado: false,
               icone: Icon(Icons.lock),
               tipoCampoTexto: TipoCampoTexto.palavra_passe,

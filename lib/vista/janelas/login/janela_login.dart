@@ -52,6 +52,7 @@ class CorpoJanelaLogin extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: CampoTexto(
+              context: context,
               campoBordado: false,
               icone: Icon(Icons.email),
               dicaParaCampo: "Email",
@@ -86,6 +87,7 @@ class CorpoJanelaLogin extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: CampoTexto(
+              context: context,
               campoBordado: false,
               icone: Icon(Icons.lock),
               tipoCampoTexto: TipoCampoTexto.palavra_passe,

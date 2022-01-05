@@ -50,6 +50,7 @@ class JanelaUsuariosAderindo extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(20),
               child: CampoTexto(
+                context: context,
                 icone: Icon(Icons.search),
                 campoBordado: false,
                 dicaParaCampo: "Pesquisar",

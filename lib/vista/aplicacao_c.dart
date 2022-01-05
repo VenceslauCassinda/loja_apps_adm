@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:componentes_visuais/dialogo/dialogos.dart';
+import 'package:componentes_visuais/dialogo/toast.dart';
 import 'package:get/get.dart';
 import 'package:loja_apps_adm/dominio/casos_uso/manipulacao_cache.dart';
 import 'package:loja_apps_adm/solucaoes_uteis/funcionais/cache/provedor_cache.dart';
@@ -79,10 +80,6 @@ class AplicacaoC extends GetxController {
         chaveCacheConfiguracaoApp))![chaveCacheConfiguracaoApp];
     return configuracao["rotas"]["usuarios_cadastrados"];
   }
-}
-
-void mostrarToast(String message) {
-  log(message);
 }
 
 AplicacaoC pegarAplicacaoC() {

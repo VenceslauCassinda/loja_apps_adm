@@ -28,14 +28,16 @@ class JanelaUsuariosAderindoC extends GetxController {
     mudarValorLista(null);
     AplicacaoC aplicacaoC = Get.find();
     _autenticacaoUsuarioI.aplicacaoC = aplicacaoC;
-    await _autenticacaoUsuarioI.pegarListaUsuariosAderindo((await pegarAplicacaoC().pegarRotaUsuarioAderindo()),
+    await _autenticacaoUsuarioI.pegarListaUsuariosAderindo(
+        (await pegarAplicacaoC().pegarRotaUsuarioAderindo()),
         accaoNaFinalizacao: (resposta) {
       mudarValorLista(resposta);
     });
   }
 
   Future<void> encomendarAutorizacaoCadastroUsuario(Usuario usuario) async {
-    await _autenticacaoUsuarioI.autorizarCadastroUsuario((await pegarAplicacaoC().pegarRotaUsuarioCadastrados()), usuario,
+    await _autenticacaoUsuarioI.autorizarCadastroUsuario(
+        (await pegarAplicacaoC().pegarRotaUsuarioCadastrados()), usuario,
         accaoNaFinalizacao: (erro) {
       if (erro != null) {
         mostrarDialogoDeInformacao(erro.mensagem);
@@ -59,7 +61,7 @@ class JanelaUsuariosAderindoC extends GetxController {
         barrierDismissible: true,
         title: "",
         content: LayoutConfirmacaoAccao(
-          "Deseja cadastrar este usuario?",
+          pergunta: "Deseja cadastrar este usuario?",
           accaoAoCancelar: () {
             fecharDialogoCasoAberto();
           },
@@ -74,7 +76,8 @@ class JanelaUsuariosAderindoC extends GetxController {
   Future<void> encomendarRemocaoUsuarioAderindo(Usuario usuario) async {
     lista.value!.removeWhere((element) => element.email == usuario.email);
     actualizarEstado();
-    await _autenticacaoUsuarioI.removerUsuarioAderindo((await pegarAplicacaoC().pegarRotaUsuarioAderindo()), usuario,
+    await _autenticacaoUsuarioI.removerUsuarioAderindo(
+        (await pegarAplicacaoC().pegarRotaUsuarioAderindo()), usuario,
         accaoNaFinalizacao: (erro) {
       if (erro != null) {
         mostrarDialogoDeInformacao(erro.mensagem);
