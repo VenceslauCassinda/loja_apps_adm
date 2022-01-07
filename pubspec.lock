@@ -212,6 +212,13 @@ packages:
       relative: true
     source: path
     version: "0.0.1"
+  oku_sanga_servidor_arquivo:
+    dependency: transitive
+    description:
+      path: "../oku_sanga_servidor_arquivo"
+      relative: true
+    source: path
+    version: "0.0.1"
   path:
     dependency: transitive
     description:

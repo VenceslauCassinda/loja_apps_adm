@@ -2,6 +2,7 @@ import 'package:componentes_visuais/componentes/layout_confirmacao_accao.dart';
 import 'package:componentes_visuais/componentes/validadores/validadcao_campos.dart';
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:componentes_visuais/dialogo/toast.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:componentes_visuais/componentes/novo_texto.dart';
 import 'package:modulo_autenticacao/casos_uso/autenticacao_usuario.dart';
@@ -10,7 +11,6 @@ import 'package:modulo_autenticacao/casos_uso/manipular_usuario.dart';
 import 'package:modulo_autenticacao/contratos/autenticacao_usuario_i.dart';
 import 'package:modulo_autenticacao/contratos/manipulacao_area_usuario_i.dart';
 import 'package:modulo_autenticacao/contratos/manipulacao_usuario_i.dart';
-import 'package:modulo_autenticacao/modelos/area_usuario.dart';
 import 'package:modulo_autenticacao/modelos/usuario.dart';
 import 'package:modulo_autenticacao/provedores/provedor_usuarios.dart';
 import 'package:modulo_autenticacao/provedores/provedor_area_usuario.dart';
@@ -79,6 +79,30 @@ class JanelaUsuariosCadastradosC extends GetxController {
             fecharDialogoCasoAberto();
           },
         ));
+  }
+
+  gerarDialogoParaMostrarDetalhesUsuario(Usuario usuario) {
+    if (usuario.rotaPrincipal != null) {
+      mostrarCarregandoDialogoDeInformacao("Buscando dados!");
+      _manipulacaoAreaUsuarioI.pegarDadosDaAreaUsuario(usuario.rotaPrincipal!,
+          accaoNaFinalizacao: (area) {
+        fecharDialogoCasoAberto();
+        Get.defaultDialog(
+            barrierDismissible: true,
+            title: "",
+            content: Column(
+              children: [
+                Text(
+                    "Quantidade de Servidores de Arquivos Disponíveis: ${area.listaServidoresArquivo!.length}"),
+                Text(
+                    "Quantidade de Repositórios para Apps: ${area.listaRepositoriosApps!.length}"),
+              ],
+            ));
+      });
+    } else {
+      mostrarDialogoDeInformacao(
+          "O Usuário não possui uma rota Principal", true);
+    }
   }
 
   gerarDialogoParaAdicionarRotaAreaUsuario(Usuario usuario) {
@@ -158,15 +182,19 @@ class JanelaUsuariosCadastradosC extends GetxController {
   }
 
   Future<void> copiarNomeSenhaParaAreaUsuario(Usuario usuario) async {
-    await _manipulacaoAreaUsuarioI.pegarDadosDaAreaUsuario(
-        usuario.rotaPrincipal!, accaoNaFinalizacao: (resposta) async {
-      var nova =
-          _manipulacaoAreaUsuarioI.mudarNomeUsuario(usuario.nome!, resposta);
-      nova =
-          _manipulacaoAreaUsuarioI.mudarSenhaUsuario(usuario.senha!, resposta);
-      await _manipulacaoAreaUsuarioI.actualizarAreaUsuario(
-          usuario.rotaPrincipal!, nova);
-    });
+    if (usuario.rotaPrincipal != null) {
+      await _manipulacaoAreaUsuarioI.pegarDadosDaAreaUsuario(
+          usuario.rotaPrincipal!, accaoNaFinalizacao: (resposta) async {
+        var nova =
+            _manipulacaoAreaUsuarioI.mudarNomeUsuario(usuario.nome!, resposta);
+        nova = _manipulacaoAreaUsuarioI.mudarSenhaUsuario(
+            usuario.senha!, resposta);
+        await _manipulacaoAreaUsuarioI.actualizarAreaUsuario(
+            usuario.rotaPrincipal!, nova);
+      });
+    } else {
+      mostrarToast("Usuário sem rota principal!");
+    }
   }
 
   Future<void> mudarEstadoUsuario(int estado, Usuario usuario) async {
@@ -180,87 +208,109 @@ class JanelaUsuariosCadastradosC extends GetxController {
 
   Future<void> adicionarNovaRotaRepositorioApp(
       String rota, Usuario usuario) async {
-    mostrarCarregandoDialogoDeInformacao("Adicionando Rota!");
-    _manipulacaoAreaUsuarioI.pegarDadosDaAreaUsuario(usuario.rotaPrincipal!,
-        accaoNaFinalizacao: (areaUsuario) async {
-      if (areaUsuario.listaRepositoriosApps == null) {
-        areaUsuario.listaRepositoriosApps = [];
-      }
-      var existe;
-      if (rota.contains(",") == true) {
-        for (var cadaRota in rota.split(",")) {
-          existe = areaUsuario.listaRepositoriosApps!
-              .firstWhere((element) => element == cadaRota, orElse: () => "");
-          if (existe.isNotEmpty) {
-            break;
+    if (usuario.rotaPrincipal != null) {
+      mostrarCarregandoDialogoDeInformacao("Adicionando Rota!");
+      _manipulacaoAreaUsuarioI.pegarDadosDaAreaUsuario(usuario.rotaPrincipal!,
+          accaoNaFinalizacao: (areaUsuario) async {
+        if (areaUsuario.listaRepositoriosApps == null) {
+          areaUsuario.listaRepositoriosApps = [];
+        }
+        var existe;
+        if (rota.contains(",") == true) {
+          for (var cadaRota in rota.split(",")) {
+            existe = areaUsuario.listaRepositoriosApps!
+                .firstWhere((element) => element == cadaRota, orElse: () => "");
+            if (existe.isNotEmpty) {
+              break;
+            }
           }
+        } else {
+          existe = areaUsuario.listaRepositoriosApps!
+              .firstWhere((element) => element == rota, orElse: () => "");
         }
-      } else {
-        existe = areaUsuario.listaRepositoriosApps!
-            .firstWhere((element) => element == rota, orElse: () => "");
-      }
 
-      if (existe.isEmpty) {
-        if ((rota.contains(",") == true)) {
-          areaUsuario.listaRepositoriosApps!.addAll(rota.split(","));
+        if (existe.isEmpty) {
+          if ((rota.contains(",") == true)) {
+            areaUsuario.listaRepositoriosApps!.addAll(rota.split(","));
+          } else {
+            areaUsuario.listaRepositoriosApps!.add(rota);
+          }
+          await _manipulacaoAreaUsuarioI.actualizarAreaUsuario(
+              usuario.rotaPrincipal!, areaUsuario, accaoNaFinalizacao: (erro) {
+            fecharDialogoCasoAberto();
+          });
         } else {
-          areaUsuario.listaRepositoriosApps!.add(rota);
-        }
-        await _manipulacaoAreaUsuarioI.actualizarAreaUsuario(
-            usuario.rotaPrincipal!, areaUsuario, accaoNaFinalizacao: (erro) {
+          if (rota.contains(",") == false) {
+            mostrarToast("Esta rota já existe!");
+          } else {
+            mostrarToast("Uma destas rotas já existe!");
+          }
           fecharDialogoCasoAberto();
-        });
-      } else {
-        if (rota.contains(",") == false) {
-          mostrarToast("Esta rota já existe!");
-        } else {
-          mostrarToast("Uma destas rotas já existe!");
         }
-        fecharDialogoCasoAberto();
-      }
-    });
+      });
+    } else {
+      mostrarToast("Usuário sem rota principal!");
+    }
   }
 
   Future<void> adicionarNovaRotaServidorDisponivel(
       String rota, Usuario usuario) async {
-    mostrarCarregandoDialogoDeInformacao("Adicionando Rota!");
-    _manipulacaoAreaUsuarioI.pegarDadosDaAreaUsuario(usuario.rotaPrincipal!,
-        accaoNaFinalizacao: (areaUsuario) async {
-      if (areaUsuario.listaServidoresArquivo == null) {
-        areaUsuario.listaServidoresArquivo = [];
-      }
-      var existe;
-      if (rota.contains(",") == true) {
-        for (var cadaRota in rota.split(",")) {
-          existe = areaUsuario.listaServidoresArquivo!
-              .firstWhere((element) => element == cadaRota, orElse: () => "");
-          if (existe.isNotEmpty) {
-            break;
+    if (usuario.rotaPrincipal != null) {
+      var listaRotas = rota.contains(",") == true ? rota.split(",") : [rota];
+      mostrarCarregandoDialogoDeInformacao("Adicionando Rota!");
+      _manipulacaoAreaUsuarioI.pegarDadosDaAreaUsuario(usuario.rotaPrincipal!,
+          accaoNaFinalizacao: (areaUsuario) async {
+        if (areaUsuario.listaServidoresArquivo == null) {
+          areaUsuario.listaServidoresArquivo = [];
+        }
+        var existe;
+        if (rota.contains(",") == true) {
+          for (var cadaRota in listaRotas) {
+            existe = areaUsuario.listaServidoresArquivo!
+                .firstWhere((element) => element == cadaRota, orElse: () => "");
+            if (existe.isNotEmpty) {
+              break;
+            }
           }
+        } else {
+          existe = areaUsuario.listaServidoresArquivo!
+              .firstWhere((element) => element == rota, orElse: () => "");
         }
-      } else {
-        existe = areaUsuario.listaServidoresArquivo!
-            .firstWhere((element) => element == rota, orElse: () => "");
-      }
 
-      if (existe.isEmpty) {
-        if ((rota.contains(",") == true)) {
-          areaUsuario.listaServidoresArquivo!.addAll(rota.split(","));
+        if (existe.isEmpty) {
+          await _manipulacaoAreaUsuarioI
+              .validarSeServidoresDisponivel(listaRotas, rota, (teste) async {
+            if (teste == false) {
+              if ((rota.contains(",") == true)) {
+                areaUsuario.listaServidoresArquivo!.addAll(listaRotas);
+                for (var rota in listaRotas) {
+                  _manipulacaoAreaUsuarioI.ocuparRepositorioDeRota(rota);
+                }
+              } else {
+                areaUsuario.listaServidoresArquivo!.add(rota);
+                _manipulacaoAreaUsuarioI.ocuparRepositorioDeRota(rota);
+              }
+              await _manipulacaoAreaUsuarioI
+                  .actualizarAreaUsuario(usuario.rotaPrincipal!, areaUsuario,
+                      accaoNaFinalizacao: (erro) {
+                fecharDialogoCasoAberto();
+              });
+            } else {
+              mostrarToast("Pelo menos uma rota está ser usada!");
+              fecharDialogoCasoAberto();
+            }
+          });
         } else {
-          areaUsuario.listaServidoresArquivo!.add(rota);
-        }
-        await _manipulacaoAreaUsuarioI.actualizarAreaUsuario(
-            usuario.rotaPrincipal!, areaUsuario, accaoNaFinalizacao: (erro) {
+          if (rota.contains(",") == false) {
+            mostrarToast("Esta rota já existe!");
+          } else {
+            mostrarToast("Uma destas rotas já existe!");
+          }
           fecharDialogoCasoAberto();
-        });
-      } else {
-        if (rota.contains(",") == false) {
-          mostrarToast("Esta rota já existe!");
-        } else {
-          mostrarToast("Uma destas rotas já existe!");
         }
-        fecharDialogoCasoAberto();
-      }
-    });
+      });
+    } else {
+      mostrarToast("Usuário sem rota principal!");
+    }
   }
 }

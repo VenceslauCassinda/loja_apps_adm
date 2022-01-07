@@ -70,7 +70,10 @@ class JanelaUsuariosCadastrados extends StatelessWidget {
                                     tituloItem: element.nome,
                                     subTituloItem: element.email,
                                     itemComMenu: true,
-                                    metodoChamadoAoClicarItem: () {},
+                                    metodoChamadoAoClicarItem: () {
+                                      _c.gerarDialogoParaMostrarDetalhesUsuario(
+                                          element);
+                                    },
                                     metodoChamadoAoRemoverItem: () {
                                       _c.gerarDialogoParaRemocaoUsuario(
                                           element);
@@ -85,8 +88,8 @@ class JanelaUsuariosCadastrados extends StatelessWidget {
                                             EdgeInsets.only(top: 30, right: 10),
                                         itemBuilder: (context) {
                                           return [
-                                            "Novo Servidor Disponível",
-                                            "Novo Repositório App",
+                                            "Add Servidor de Arquivo Disponível",
+                                            "Add Repositório App",
                                             "Mudar Estado",
                                             "Copiar Nome e Senha",
                                           ]
